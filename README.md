@@ -1,5 +1,4 @@
-
-# Senior Design Project: Project Management Data with Django
+# Orai: Sprint Suggestions  
 
 This web application is a recommendation engine built around project management data. It combines the querying power of the [Neo4j graph database](https://neo4j.com/) with the flexibility of the [Django web framework](https://www.djangoproject.com/) using the [django-neomodel plugin](https://github.com/neo4j-contrib/django-neomodel).
 
@@ -15,54 +14,61 @@ Once you've made sure that Python and pip are installed, you can clone the repos
 
 To set up a virtual environment:
 
- 1. Install the virtualenv library using `pip install virtualenv`
- 2. Navigate to project folder and run `virtualenv .`
- 3. Start the virtual environment using `.\Scripts\activate`
+1. Change directory to wherever you cloned Orai `cd <path_to_orai>\Orai` 
+2. Create the virtual environment with `python -m venv .\venv`
+3. Start the virtual environment using `.\venv\Scripts\activate`
 
-If this was successful, you should see something like `(proj-name) C:\path\to\proj-name`. To deactivate the virtual environment, run the command `.\Scripts\deactivate`.
+If this was successful, you should see something like `(venv) <path_to_orai>\Orai`. To deactivate the virtual environment, run the command `.\Scripts\deactivate`.
 
 Now, you can add the necessary dependencies to the project. This can be done by using the requirements file:
 `pip install -r requirements.txt`
 
 The key dependencies are also listed below and can be installed individually by running `pip install <name>==<version>`:
-```
-Django==3.1.8 
-django-neomodel==0.0.6
-neo4j-driver==4.1.1
-neomodel==4.0.2
-djangorestframework==3.12.2
+```requirements.txt
+Django==3.2.5
+django-neomodel==0.0.7
+neo4j-driver==4.3.1
+neomodel==4.0.4
+gunicorn==20.1.0
+django-heroku==0.3.1
+python-dotenv==0.19.2
 ```
 ### Connect to the Database
 Now that the application is up and running, you need to connect to the database. Running this database locally requires Neo4j Desktop, which you can download [here](https://neo4j.com/download/). 
 
 To load the database:
 
- 1. Download the dump file from https://drive.google.com/file/d/1NB29_JRyXT2QSpN5LEM0Cww9QIgPWLyd/view?usp=sharing
+ 1. Download the dump file from [here](https://drive.google.com/file/d/18v6ea16UnqW8dB9KP1bG7gaAN62_Oxbv/view?usp=sharing)
  2. Create a new project (or use the existing default project)
  3. Add a local DMBS, making sure to remember the password
  4. Click the three dots next to your newly created DBMS and open up the terminal
  5. Change to the `bin` directory using `cd bin`
- 6. Load the database from the dump file by running `neo4j-admin load --from C:\path\to\projdata.dump` 
+ 6. Load the database from the dump file by running `neo4j-admin load --from C:\path\to\orai-2021-12-3.dump` 
  
 
-Now, you can start the DBMS. To connect the database to the application, open up DJangoBackend\settings.py. Find the part that says `config.DATABASE_URL` and change it so that it looks like `config.DATABASE_URL = 'bolt://neo4j:<password>@localhost:7687'`. 
+Now, you can start the DBMS. To connect the database to the application, we need to create a file that Orai will read environment variables from create a file called `.env` at the base directory. in it copy the following replacing anything in `<your_password_here>` with the password you set up in the neo4j gui.
+```dotenv
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=<your_password_here>
+NEO4J_SERVER=localhost
+NEO4J_PORT=7687
+```
 
 Once this is done, go back to the command line and use `python manage.py runserver` to run the development server. If everything was done correctly, you should be able to go to http://127.0.0.1:8000/ to see the application. 
 
 ## Application Features
 
-Right now, the application has a basic proof-of-concept feature that allows you to search by story title (full or partial). This search will return a page that contains the first item in the list of potential matching results. 
-
-![Main Search Page](https://github.com/FAU-ED2Spr2021-Gr21/Project-Management-Django/blob/main/imgs/main_search.png "Main Search Page")
+![Form](docs/form.png "Form")
 _________
 
-![Search Results](https://github.com/FAU-ED2Spr2021-Gr21/Project-Management-Django/blob/main/imgs/searchresults.png "Search Results")
+![Results](docs/results.png "Results")
 _________
 
-![Example Graph](https://github.com/FAU-ED2Spr2021-Gr21/Project-Management-Django/blob/main/imgs/domain_model.png "Example Graph")
+![Results Cont.](docs/results-cont.png "Results Cont.")
 _________
 
-Of course, this proof-of-concept is not necessarily a reflection of the final product. Future feature updates will include adding more search functionality, displaying related stories, and improving the user interface. 
+![Story Details](docs/story-details.png "Results Cont.")
+_________
 
 
 ## Built With
@@ -74,10 +80,9 @@ Of course, this proof-of-concept is not necessarily a reflection of the final pr
 
 ## Authors
 
-* Angelo De Marta
-* Ciara O'Neill
-* Micah Brown
-* Zack Inthapanya
+* Felix Medrano
+* Valentina Diaz
+* Jacob Christensen
 
 ## Acknowledgments
 

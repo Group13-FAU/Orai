@@ -1,0 +1,24 @@
+id,phase,name,start,end,parent
+1s,Design Phase,Design Phase,1/1/2019,1/10/2019,
+1.1s,Design Phase,Gameplay Brainstorm,1/1/2019,1/3/2019,
+1.2s,Design Phase,Refine Game Concepts,1/3/2019,1/7/2019,1.1s
+1.3s,Design Phase,Determine Project Scope,1/7/2019,1/8/2019,1.2s
+1.4s,Design Phase,Balance underlying math,1/8/2019,1/10/2019,1.3s
+1.5s,Design Phase,Design Complete,1/10/2019,1/10/2019,1.4s
+2s,Coding Phase,Coding Phase,1/10/2019,1/16/2019,1s
+2.1s,Coding Phase,Choose middleware,1/10/2019 7:00,1/10/2019 16:00,
+2.2s,Coding Phase,Compile frameworks,1/11/2019,1/14/2019,2.1s
+2.3s,Coding Phase,Parse framistans,1/14/2019,1/16/2019,2.2s
+2.4s,Coding Phase,Coding Complete,1/16/2019,1/16/2019,2.3s
+3s,Art Phase,Art Phase,1/10/2019,1/19/2019,1s
+3.1s,Art Phase,Concept sketches,1/10/2019,1/13/2019,
+3.2s,Art Phase,Render pixel sprites,1/13/2019,1/17/2019,3.1s
+3.3s,Art Phase,Fleece polygons,1/17/2019,1/19/2019,3.2s
+3.4s,Art Phase,Art Complete,1/19/2019,1/19/2019,3.3s
+4s,Combine art and code,Combine art and code,1/19/2019,1/27/2019,"2s,3s"
+5s,Testing phase,Testing Phase,1/27/2019,2/14/2019,4s
+5.1s,Testing phase,Alpha test,1/27/2019,1/31/2019,
+5.2s,Testing phase,Friends and family beta,1/31/2019,2/4/2019,5.1s
+5.3s,Testing phase,Public beta test,2/4/2019,2/14/2019,5.2s
+5.4s,Testing phase,Testing Complete,2/14/2019,2/14/2019,5.3s
+6s,Game Release,Game Release,2/14/2019,2/14/2019,5s

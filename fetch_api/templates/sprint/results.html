@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+    Project Management
+{% endblock %}
+
+{% block additional_css %}
+    <link href="{% static 'css/results.css' %}" rel="stylesheet"/>
+    <script src="https://code.jscharting.com/latest/jscharting.js"></script>
+{% endblock %}
+
+{% block body %}
+    <body class="container register">
+    <div class="row">
+        <div class="col-md-3 register-left">
+            <img src="{% static 'img/knapsack.png' %}"
+                 alt=""/>
+            <h3>Here are the Results!</h3>
+
+            <p>The results on the right are the most optimal path for this project. <br>
+                <br> Click home to try different inputs</p>
+            <div class="register-left">
+                <div class='user-input'>
+
+                    <p>
+                        <strong><u style="font-size:18px;">Here's What You Chose: </u></strong><br><br>
+                        Minimum Sprints: {{ min_sprints }}<br>
+                        Sprint Complexity: {{ sprint_complexity }}
+                        {% if max_dependants %}
+                            <br>
+                            Max Dependants per Sprint: {{ max_dependants }}
+                        {% endif %}
+                    </p>
+                    {% if requested_stories %}
+                        Stories:
+                        <ul>
+                            {% for requested_story in requested_stories %}
+                                <li>{{ requested_story.name }}</li>
+                            {% endfor %}
+                            <br>
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-9 register-right">
+
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <h3 class="register-heading" style="font-size:30px;"><strong>Final Results:</strong></h3>
+
+                    <div class="row register-form">
+
+                        <div class="explain">
+                            <span style="display:inline-block;"></span>
+                            {% for sprint in sprints %}
+                                <h3>{{ sprint.name }} - complexity: {{ sprint.total_complexity }}</h3>
+                                <ul>
+                                    {% for story in sprint.stories %}
+                                        <li>
+                                            <i class="bi {% if story.approved %}bi-check-lg{% else %}bi-x-lg{% endif %}"></i> {{ story.nodeID }}
+                                            - <a style="color: white;"
+                                                 href="{% url 'fetch_api:view_story' story.nodeID %}"
+                                                 target="_blank">{{ story.name }}</a>
+                                            {% if story in requested_stories %}
+                                                <span class="badge badge-danger">Requested</span>{% elif story in required_stories %}
+                                                <span class="badge badge-warning">Required</span>{% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                    <!--Takes u to the previous page using history.
+                        For Graph might want to make -1 into -2 to go back to home page and -1 to go back to results-->
+                    <a href="{% url 'fetch_api:index' %}">
+                        <input type="button" style="float:right" class="btnRegister" value="Home"/>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="chartDiv" style="width: 940px;height: 600px;margin: 40px auto">
+    </div>
+    <script>
+        let stories = [];
+        let sprints = [];
+        let temp = {};
+        let sprint_number = 0;
+        let today = new Date()
+        let end
+        let start
+        let story_start
+        let story_end
+        {% for sprint in sprints %}
+            end = new Date(today)
+            start = sprints.length === 0 ? today : sprints[sprints.length - 1].end;
+            console.log(end, "end")
+            console.log("length", start.getDate())
+            //end.setDate (start.getDate()+(+("{{sprint.total_complexity}}")))
+            end = new Date(
+                start.getFullYear(),
+                start.getDate() + (+("{{sprint.total_complexity}}")) <= 31 ? start.getMonth() : start.getMonth() + 1,
+                start.getDate() + (+("{{sprint.total_complexity}}"))
+            )
+            sprints.push({
+                name: "{{sprint.name}}",
+                start: start,
+                end: end,
+                stories: []
+
+            })
+            console.log("sprint", "{{sprint}}")
+            {% for story in sprint.stories %}
+                end = new Date(today)
+                console.log(end, "end")
+                end.setDate(end.getDate() + (+("{{sprint.total_complexity}}")))
+                console.log("{{story}}")
+                console.log("sprints: ", sprints)
+                console.log("today", today)
+                var sprint = sprints[sprints.length - 1].name
+                if (sprint_number < sprints.length) {
+                    stories.push({
+                        name: sprint,
+                        complexity: +("{{ sprint.total_complexity }}"),
+                        id: sprints.length - 1,
+                        phase: sprint,
+                        start: sprints[sprint_number].start,
+                        end: sprints[sprint_number].end
+                    })
+                    sprints[sprint_number].stories.push(sprints[sprint_number].start);
+                    sprint_number += 1
+
+                }
+                start = sprints[sprints.length - 1].stories[sprints[sprints.length - 1].stories.length - 1]
+                console.log(sprint)
+                end = new Date(start)
+                end.setDate(end.getDate() + (+("{{story.complexity}}")))
+                stories.push({
+                    name: "{{ story.name }}",
+                    complexity: {{ story.complexity }},
+                    id: {{ story.id }},
+                    phase: sprint,
+                    start: start,
+                    end: end
+
+                })
+                sprints[sprints.length - 1].stories.push(end);
+                console.log(stories)
+                stories = stories.map((story, new_id) => ({
+                    name: story.name,
+                    phase: story.phase,
+                    complexity: story.complexity,
+                    id: story.phase === story.name ? sprints.map((sprint) => sprint.name).indexOf(story.phase) + 1 + "s" : (sprints.map((sprint) => sprint.name).indexOf(story.phase) + 1) + "." + (new_id + 1) + "s",
+                    start: story.start,
+                    end: story.end,
+                    parent: story.phase === story.name ? "" : sprints.map((sprint) => sprint.name).indexOf(story.phase) + 1 + "s"
+                }))
+            {% endfor %}
+        {% endfor %}
+        console.log("sprints: ", sprints)
+        console.log("stories: ", stories)
+
+        var chart;
+        // Reusable functions to create any axis tick data grid. 
+        var span = function (val, width) {
+            return (
+                '<span style="width:' +
+                width +
+                'px;">' +
+                val +
+                '</span>'
+            );
+        };
+        var columnWidths = [35, 140, 40];
+        var mapLabels = function (labels) {
+            return labels
+                .map(function (v, i) {
+                    return span(v, columnWidths[i]);
+                })
+                .join('');
+        };
+
+        // Custom templates 
+        var tickTemplate = mapLabels([
+            '%section',
+            '%xValue',
+            '{days(%high-%low):n1}d'
+        ]);
+        var tickTemplateBold =
+            '<b>' + tickTemplate + '</b>';
+        var headerTemplate =
+            '<b>' +
+            mapLabels([' ', 'Task', 'Points']) +
+            '</b>';
+
+        JSC.fetch("{% static 'TaskGraph.csv' %}")
+            .then(function (response) {
+                return response.text();
+            })
+            .then(function (text) {
+                console.log(stories)
+                //console.log(JSC.csv2Json(text))
+                chart = renderChart(stories);
+                //chart = renderChart(JSC.csv2Json(text));
+            });
+
+        function renderChart(data) {
+            return JSC.chart('chartDiv', {
+                defaultBox_boxVisible: false,
+                type: 'horizontal column',
+                title_label_text: 'Recommended Sprints:',
+                zAxis_scale_type: 'stacked',
+                yAxis_scale_type: 'time',
+                annotations: [
+                    {
+                        label_text: headerTemplate,
+                        position: '-6,40'
+                    }
+                ],
+                legend: {
+                    position: 'top',
+                    template: '%icon %name'
+                },
+                series: getSeries(data),
+                defaultSeries: {
+                    defaultPoint: {
+                        tooltip:
+                            '<b>%name</b><br>%yStart - %yValue<br>',
+                        xAxisTick_label_text: tickTemplate,
+                        marker_visible: false
+                    },
+                    firstPoint: {
+                        label_text: '%name',
+                        xAxisTick_label_text: tickTemplateBold
+                    }
+                }
+            });
+        }
+
+        function getSeries(data) {
+            return (
+                JSC.nest()
+                    .key('phase')
+                    .key('name')
+                    // Custom point configuration
+                    .pointRollup(function (key, vals) {
+                        var val = vals[0];
+                        var result = {
+                            id: val.id,
+                            name: val.name,
+                            parent: val.parent,
+                            y: [val.start, val.end],
+                            attributes_section: val.id.replace(
+                                's',
+                                ''
+                            )
+                        };
+                        // Column series data points as milestones
+                        if (val.start === val.end) {
+                            result.marker = {
+                                type: 'diamond',
+                                visible: true
+                            };
+                        }
+                        return result;
+                    })
+                    .series(data)
+            );
+        }
+
+    </script>
+    </body>
+{% endblock %}

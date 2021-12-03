@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+    Project Management
+{% endblock %}
+
+{% block additional_css %}
+    <link href="{% static 'css/results.css' %}" rel="stylesheet"/>
+{% endblock %}
+
+{% block body %}
+    <body class="container register">
+    <div class="row">
+        <div class="col-md-9 register-right">
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <h3 class="register-heading"><strong>{{ story.name }}</strong></h3>
+                    <div class="row register-form">
+                        <div class="explain" style="padding-left:10%">
+                            <span style="display:inline-block;"></span>
+                            <h4>ID: {{ story.nodeID }}</h4>
+                            <h4>sentimentScore: {{ story.sentimentScore }}</h4>
+                            <h4>sentiment: {{ story.sentiment }}</h4>
+                            <h4>notes: {{ story.notes }}</h4>
+                            <h4>value: {{ story.value }}</h4>
+                            <h4>acceptance_criteria: {{ story.acceptance_criteria }}</h4>
+                            <h4>complexity: {{ story.complexity }}</h4>
+                            <h4>priority: {{ story.priority }}</h4>
+                            <h4>approved: {{ story.approved }}</h4>
+                            {% if story.requires %}
+                                <h4>Requirements:</h4>
+                                <ul>
+                                    {% for required in story.requires %}
+                                        <li>
+                                            <a style="color: white;"
+                                               href="{% url 'fetch_api:view_story' required.nodeID %}"
+                                               target="_blank">{{ required.nodeID }}
+                                                - {{ required.name }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                            <span style="display:inline-block;"></span>
+                        </div>
+                    </div>
+                    <a href="{% url 'fetch_api:index' %}">
+                        <input type="button" style="float:right" class="btnRegister" value="Home"/>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+{% endblock %}

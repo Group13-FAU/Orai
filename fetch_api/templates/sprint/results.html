@@ -15,8 +15,7 @@
     <body class="container register">
     <div class="row">
         <div class="col-md-3 register-left">
-            <img src="{% static 'img/knapsack.png' %}"
-                 alt=""/>
+            <img src="{% static 'img/knapsack.png' %}" alt=""/>
             <h3>Here are the Results!</h3>
 
             <p>The results on the right are the most optimal path for this project. <br>
@@ -98,32 +97,37 @@
         let start
         let story_start
         let story_end
+        //Organizing each Sprint 
         {% for sprint in sprints %}
             end = new Date(today)
             start = sprints.length === 0 ? today : sprints[sprints.length - 1].end;
-            console.log(end, "end")
-            console.log("length", start.getDate())
-            //end.setDate (start.getDate()+(+("{{sprint.total_complexity}}")))
-            end = new Date(
-                start.getFullYear(),
-                start.getDate() + (+("{{sprint.total_complexity}}")) <= 31 ? start.getMonth() : start.getMonth() + 1,
-                start.getDate() + (+("{{sprint.total_complexity}}"))
-            )
-            sprints.push({
-                name: "{{sprint.name}}",
-                start: start,
-                end: end,
-                stories: []
 
-            })
-            console.log("sprint", "{{sprint}}")
+            end = make_end_date("{{sprint.total_complexity}}", start);
+            function make_end_date(duration, start) {
+                const days_in_each_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+                let end = new Date(
+                    start.getFullYear(),
+                    start.getDate() + (+(duration)) <= days_in_each_month[start.getMonth()] ? start.getMonth() : start.getMonth(),
+                    start.getDate() + (+(duration))
+                );
+                return end;
+            }
+
+            organize_sprints(sprints, "{{sprint.name}}");
+            function organize_sprints(sprints, sprint_name) {
+                sprints.push({
+                    name: sprint_name,
+                    start: start,
+                    end: end,
+                    stories: []
+                })
+                return sprints;
+            }
+
+            //Organizing Sprints and Stories 
             {% for story in sprint.stories %}
                 end = new Date(today)
-                console.log(end, "end")
                 end.setDate(end.getDate() + (+("{{sprint.total_complexity}}")))
-                console.log("{{story}}")
-                console.log("sprints: ", sprints)
-                console.log("today", today)
                 var sprint = sprints[sprints.length - 1].name
                 if (sprint_number < sprints.length) {
                     stories.push({
@@ -136,10 +140,8 @@
                     })
                     sprints[sprint_number].stories.push(sprints[sprint_number].start);
                     sprint_number += 1
-
                 }
                 start = sprints[sprints.length - 1].stories[sprints[sprints.length - 1].stories.length - 1]
-                console.log(sprint)
                 end = new Date(start)
                 end.setDate(end.getDate() + (+("{{story.complexity}}")))
                 stories.push({
@@ -164,9 +166,8 @@
                 }))
             {% endfor %}
         {% endfor %}
-        console.log("sprints: ", sprints)
-        console.log("stories: ", stories)
 
+        //Render Gantt Chart 
         var chart;
         // Reusable functions to create any axis tick data grid. 
         var span = function (val, width) {

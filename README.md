@@ -61,10 +61,10 @@ Once this is done, go back to the command line and use `python manage.py runserv
 ![Form](docs/form.png "Form")
 _________
 
-![Results](docs/results.png "Results")
+![Results](docs/results-full.png "Results")
 _________
 
-![Results Cont.](docs/results-cont.png "Results Cont.")
+![Results No Dep](docs/results-no-dep-full.png "Results No Dep")
 _________
 
 ![Story Details](docs/story-details.png "Results Cont.")

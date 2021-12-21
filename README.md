@@ -87,6 +87,6 @@ _________
 ## Acknowledgments
 
 * The [Paradise Papers Django project](https://github.com/neo4j-examples/paradise-papers-django), which served as a model for our own application
-* The Silver Logic for sponsoring this project and giving us support all the way through
+* [The SilverLogic](https://tsl.io/) for sponsoring this project and giving us support all the way through
 
 
